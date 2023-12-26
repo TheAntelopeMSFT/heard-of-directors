@@ -1,0 +1,63 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Group Chat</title>
+  <style>
+    #messages {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .user, .agent, .ai_output {
+      display: list-item;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .user {
+      color: white;
+      background-color: green;
+      display: inline-block;
+      padding: 10px;
+      border-radius: 10px;
+      margin-right: auto;
+    }
+  
+    .agent {
+      color: white;
+      background-color: rgb(38, 0, 128);
+      display: inline-block;
+      padding: 10px;
+      border-radius: 10px;
+      margin-left: auto;
+    }
+
+  </style>
+</head>
+<body>
+  <ul id="messages"></ul>
+  <form action="">
+    <input id="m" autocomplete="off" value="Write a market launch plan"/><button>Send</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script>
+    $(function () {
+      var socket = io();
+      $('form').submit(function(e){
+        e.preventDefault(); // prevents page reloading
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        var li = $('<li>').text(msg.text);
+        li.addClass(msg.sender);
+        $('#messages').append(li);
+      });
+    });
+  </script>
+</body>
+</html>
